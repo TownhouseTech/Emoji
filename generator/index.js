@@ -202,15 +202,25 @@ async function parse() {
     const map = new Map();
     const $ = cheerio.load(await fs.readFile("build/full-emoji-list.html"));
     const emojiInfo = Object.values(JSON.parse(await fs.readFile("build/emoji.json")));
+    
+    emojiInfo.forEach((info) => {
+      const emojiStylePos = info.code_points.output.indexOf("-fe0f");
+      if (emojiStylePos >= 0 && info.code_points.output.length <= 12) {
+        info.code_points.output = info.code_points.output.substr(0,emojiStylePos)
+      }
+    });
 
     const rows = $("tr").get()
         .map(it => it.children.filter(it => it.name === "td"))
-        .filter(it => it.length === 16 && it[1].attribs.class === "code")
+        .filter(it => it.length === 15 && it[1].attribs.class === "code")
         .filter(it => {
-            const presentInInfo = emojiInfo.find(info => info.code_points.output === getCodePointForFindingInfo(it[1]));
+            const thisCodePoint = getCodePointForFindingInfo(it[1]);
+            const presentInInfo = emojiInfo.find(info => info.code_points.output === thisCodePoint);
 
-            if (!presentInInfo) {
-                console.error(`Not found in emoji.json: ${it[15].children[0].data}`)
+            if (presentInInfo) {
+                presentInInfo.order = it[0].children[0].data;
+            } else {
+                console.error(`Not found in emoji.json: ${thisCodePoint} - ${it[14].children[0].data}`)
             }
 
             return presentInInfo;
@@ -231,7 +241,7 @@ async function parse() {
         }
 
         const code = row[1].children[0].attribs.name;
-        const name = row[15].children[0].data;
+        const name = row[14].children[0].data;
         const isVariant = name.includes("skin tone");
 
         if (ignore.includes(code)) {

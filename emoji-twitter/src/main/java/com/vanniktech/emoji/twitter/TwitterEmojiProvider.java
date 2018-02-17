@@ -17,11 +17,11 @@ public final class TwitterEmojiProvider implements EmojiProvider {
     return new EmojiCategory[] {
       new PeopleCategory(),
       new NatureCategory(),
-      new FoodCategory(),
       new ActivityCategory(),
-      new TravelCategory(),
       new ObjectsCategory(),
+      new TravelCategory(),
       new SymbolsCategory(),
+      new FoodCategory(),
       new FlagsCategory()
     };
   }
