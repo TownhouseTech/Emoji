@@ -6,7 +6,7 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.text.style.ImageSpan;
 
-final class EmojiSpan extends ImageSpan {
+final public class EmojiSpan extends ImageSpan {
   private final float size;
 
   EmojiSpan(final Context context, final int drawableRes, final float size) {
